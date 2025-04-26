@@ -32,6 +32,20 @@ local function get_folders()
   return (folders ~= "" and folders .. "/" or "")
 end
 
+local function git_status_type()
+  local gs = vim.b.gitsigns_status_dict
+  if not gs then
+    return nil
+  end
+  if gs.untracked then
+    return "untracked"
+  end
+  if (gs.added and gs.added ~= 0) or (gs.changed and gs.changed ~= 0) or (gs.removed and gs.removed ~= 0) then
+    return "modified"
+  end
+  return nil
+end
+
 ---@return string
 function M.get_winbar(opts)
   local diagnostics = {}
@@ -74,12 +88,20 @@ function M.get_winbar(opts)
     sectionBhl = "DiagnosticHint"
   end
 
+  local git_section = ""
+  local gstype = git_status_type()
+  if gstype == "untracked" and config.options.git_untracked_symbol then
+    git_section = " " .. config.options.git_untracked_symbol
+  elseif gstype == "modified" and config.options.git_modified_symbol then
+    git_section = " " .. config.options.git_modified_symbol
+  end
+
   -- don't highlight name if the window is not active
   if should_dim and config.options.dim_inactive.name then
     sectionBhl = config.options.dim_inactive.highlight
   end
 
-  local sectionB = "  " .. "%#" .. sectionBhl .. "#" .. get_folders() .. "%t" .. sectionC
+  local sectionB = "  " .. "%#" .. sectionBhl .. "#" .. get_folders() .. "%t" .. sectionC .. git_section
   return sectionA .. sectionB .. "%*"
 end
 

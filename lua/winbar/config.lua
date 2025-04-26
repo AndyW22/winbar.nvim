@@ -4,6 +4,8 @@ local defaults = {
   diagnostics = true,
   buf_modified = true,
   buf_modified_symbol = "M",
+  git_modified_symbol     = "",      -- unstaged git changes (use "M" or "G" if fonts missing)
+  git_untracked_symbol    = "󰍼",      -- new file, untracked in git
   dir_levels = 0,
   dim_inactive = {
     enabled = false,
@@ -12,8 +14,8 @@ local defaults = {
     name = true,
   },
   filetype_exclude = {
-		"k8s_*",
-		"snacks_*",
+    "k8s_*",
+    "snacks_*",
     "NeogitStatus",
     "NvimTree",
     "Outline",
